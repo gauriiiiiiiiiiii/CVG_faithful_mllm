@@ -1,0 +1,178 @@
+RESEARCH PLAN: Reproduce, Extend, and Publish on CVG
+Paper: "Boosting Faithful Multi-Modal LLMs via Complementary Visual Grounding"
+Fu et al., IEEE Transactions on Image Processing, Vol. 34, 2025
+======================================================================
+
+BACKGROUND
+----------
+CVG is a training-free framework that reduces hallucination in Multimodal LLMs.
+It identifies two root causes of hallucination:
+  1. Insufficient Visual Context -- ambiguous visual input forces reliance on language priors
+  2. Progressive Textual Drift -- attention drifts away from visual tokens in long responses
+
+CVG addresses these with three modules:
+  - Visual Token Disentanglement (VTD): splits visual tokens into "chosen" (top αN,
+    query-relevant) and "rejected" (low-significance) sets using hybrid attention score
+    from LLM cross-attention and ViT CLS self-attention.
+  - Dynamic Attention Calibration (DAC): injects δᵢ = β·(1 - exp(-i/τ)) during
+    auto-regressive generation -- increases attention to visual tokens, decreases it
+    for textual tokens, growing stronger as response lengthens.
+  - Grounding Flow Fusion (GFF): adaptive contrastive decoding between the two branches.
+    If KL(p_chosen ‖ p_rejected) ≥ ε, amplify chosen signal and penalize rejected.
+    Otherwise rely on chosen branch alone.
+
+Key hyperparameters: α=0.7, β=0.2, τ=10, ε=0.01
+Computational overhead: 64% extra FLOPs (vs 100% for VCD baseline)
+SOTA results on POPE, CHAIR, AMBER, MME-Hal benchmarks across LLaVA-1.5 and LLaVA-Next.
+
+
+PHASE 1 -- REPRODUCE (Weeks 1-3)
+---------------------------------
+Goal: validate implementation against Table I and Table II numbers.
+
+Setup:
+  - Search for official code: GitHub query "Zheren Fu CVG hallucination USTC" or
+    "Complementary Visual Grounding MLLM". Paper lists no official repo.
+  - If no code found, implement from scratch.
+  - Base model: LLaVA-1.5-7B (HuggingFace). Smallest, fastest iteration.
+  - GPU: A100 or equivalent (paper uses A100).
+
+Implementation order:
+  1. VTD
+       - Extract cross-attention scores A_Q2I from LLM backbone (last query token,
+         averaged over attention heads and layers #19-22 for 7B models).
+       - Extract self-attention A_I2I from ViT intermediate layers (#16-18 for CLIP).
+       - Hybrid score: a = a_cross + a_self ∈ R^N
+       - Partition: chosen = top αN tokens, rejected = remaining (1-α)N tokens.
+       - Feed chosen and rejected image patches independently through ViT+projector
+         to create two parallel visual token sequences.
+  2. DAC
+       - During auto-regressive generation at step i:
+         δᵢ = β · (1 - exp(-i/τ))
+       - For chosen branch: add δᵢ to visual token logits, subtract from textual.
+       - For rejected branch: inverse -- subtract δᵢ from visual, add to textual.
+  3. GFF
+       - After each decoding step, compute p_chosen and p_rejected (output distributions).
+       - Compute D_KL(p_chosen ‖ p_rejected).
+       - If D_KL ≥ ε (divergent branches):
+           logit_final = logit_chosen + γ · (logit_chosen - logit_rejected), γ=1
+       - If D_KL < ε (convergent branches):
+           logit_final = logit_chosen
+       - Apply plausibility mask V_c (filter low-probability tokens, η=0.2) before
+         final softmax.
+
+Validation targets (Table I, LLaVA-1.5-7B):
+  POPE:    ran=89.1, pop=86.4, adv=82.3, A-OKVQA adv=88.4
+  CHAIR:   CHAIR_S=44.1, CHAIR_I=13.4
+  MME-Hal: Object-level=190.0, Attribute-level=141.0
+  AMBER:   attr=73.4, stat=71.6, rel=59.0
+
+Run POPE first (binary QA, fastest to evaluate). Confirm numbers match before
+investing time in CHAIR (requires image captioning generation).
+
+
+PHASE 2 -- FULL BENCHMARKS (Weeks 4-5)
+----------------------------------------
+Run all benchmarks from paper to confirm full reproduction:
+
+Hallucination benchmarks:
+  - POPE (discriminative, object existence)
+  - CHAIR (generative, image captioning -- instance + sentence level)
+  - AMBER (discriminative + generative)
+  - MME-Hal (object-level + attribute-level)
+  - MM-Hal, HallusionBench (Table III, model-based evaluation)
+
+General ability benchmarks:
+  - VQA-v2, GQA, VizWiz, ScienceQA, TextVQA
+  - MME, MM-Bench, LLaVA-Wild, MM-Vet
+
+Reproduce ablation Table VI to confirm each module's individual contribution:
+  - Only VTD (no DAC, no GFF)
+  - VTD + DAC (no GFF)
+  - Full CVG
+This confirms the modular design is understood correctly.
+
+
+PHASE 3 -- IDENTIFY THE GAP (Week 6)
+--------------------------------------
+Paper explicitly admits two weaknesses:
+  1. Text-rich images (TextVQA degrades) -- VTD marks fine-grained text patches as
+     "rejected" because they don't match query-to-image attention patterns.
+  2. Heuristic token selection -- fixed α=0.7 regardless of query complexity or
+     image content.
+
+Run error analysis:
+  - Sample failure cases from CHAIR where CVG still hallucinates.
+  - Sample TextVQA failures (confirmed: CVG degrades here per paper Section V-E).
+  - Cluster by failure type: object existence, attribute, count, text recognition.
+  - Quantify how large the text-rich failure category is.
+
+This analysis becomes the motivation section of the new paper.
+
+
+PHASE 4 -- EXTEND / IMPROVISE (Weeks 7-10)
+--------------------------------------------
+Choose one primary improvement direction. Candidates:
+
+Option A (RECOMMENDED): Adaptive Token Selection + Text-Aware VTD
+  - Problem: fixed α discards useful text patches; text-heavy images fail.
+  - Fix: compute per-image "text density" score (e.g., edge density or lightweight
+    OCR confidence map) and use it to protect high-text-density patches from rejection.
+  - Also: make α adaptive -- higher α (keep more tokens) for complex scenes,
+    lower α for simple scenes. Proxy for complexity: entropy of visual attention scores.
+  - This directly addresses the stated limitation and is measurable on TextVQA and CHAIR.
+
+Option B: Extend to Video MLLMs
+  - Apply CVG frame-by-frame with a temporal consistency constraint on chosen token sets.
+  - New domain, same framework -- bigger scope, more risk.
+
+Option C: Efficiency -- Sparse DAC
+  - Apply DAC calibration only in the top-K most attention-drift-prone layers,
+    reducing FLOPs overhead below 64%.
+  - Good if targeting an efficiency/deployment audience.
+
+For a clean first paper: pursue Option A.
+Ablation structure for new paper:
+  Row 1: Vanilla (baseline)
+  Row 2: CVG (reproduced)
+  Row 3: CVG + adaptive α
+  Row 4: CVG + text-aware VTD
+  Row 5: CVG + adaptive α + text-aware VTD (proposed)
+
+Key metric to improve: TextVQA (CVG degrades here), plus maintain CHAIR/POPE gains.
+
+
+PHASE 5 -- PAPER WRITING (Weeks 11-14)
+----------------------------------------
+Title candidate: "CVG-X: Adaptive Complementary Visual Grounding for Faithful MLLMs"
+or: "Beyond Fixed Grounding: Adaptive Visual Token Selection for Hallucination Mitigation"
+
+Contribution framing:
+  1. Identify and quantify CVG's failure on text-rich images (new empirical finding).
+  2. Propose adaptive α selection and text-density-aware VTD as targeted fixes.
+  3. Demonstrate improvement on TextVQA without sacrificing CHAIR/POPE/AMBER gains.
+  4. Generalize to LLaVA-1.5 (7B/13B) and LLaVA-Next (7B/13B) as in original paper.
+
+Paper structure:
+  I.    Introduction -- MLLM hallucination, CVG's contribution, its text-rich gap
+  II.   Related Work -- MLLMs, hallucination, visual grounding, contrastive decoding
+  III.  Preliminaries -- MLLM architecture recap (brief)
+  IV.   CVG Review -- summarize original CVG (cite, don't reproduce all math)
+  V.    Proposed Method -- adaptive α, text-density score, modified VTD
+  VI.   Experiments -- all benchmarks from original paper + TextVQA focus
+  VII.  Ablation Study -- each new component
+  VIII. Conclusion + Limitations
+
+Target venues:
+  - Conference: CVPR 2026 (deadline ~Nov 2025), ECCV 2026, ICCV 2027
+  - Journal: IEEE TIP (same venue as original) or IEEE TMM
+
+
+IMMEDIATE NEXT STEPS
+---------------------
+1. Search GitHub for official CVG code.
+2. Set up LLaVA-1.5-7B on your machine (HuggingFace transformers).
+3. Install POPE evaluation script (https://github.com/RUCAIBox/POPE).
+4. Implement VTD first, verify chosen/rejected split visually on a few images.
+5. Add DAC, run a single generation, check attention weight curves match Fig. 9.
+6. Add GFF, run full POPE eval, compare to Vanilla baseline.
