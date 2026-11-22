@@ -1,0 +1,21 @@
+/.cocoindex_code/
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+/data/
+*.egg-info/
+dist/
+build/
+.venv/
+paper-orchestra/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+
+# Large reference PDF (18MB, not our work)
+Boosting_Faithful_Multi-Modal_LLMs_via_Complementary_Visual_Grounding.pdf

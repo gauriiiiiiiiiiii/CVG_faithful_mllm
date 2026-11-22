@@ -1,0 +1,1457 @@
+{
+  "vanilla": {
+    "accuracy": 86.66666666666667,
+    "precision": 86.66666666666667,
+    "recall": 86.66666666666667,
+    "f1": 86.66666666666667,
+    "yes_ratio": 50.0,
+    "tp": 78,
+    "fp": 12,
+    "tn": 78,
+    "fn": 12,
+    "total": 180,
+    "avg_time": 0.9575605365965102,
+    "responses": [
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 2.4196839332580566
+      },
+      {
+        "question": "Is there a pizza in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no pizza in the image",
+        "time": 0.9720618724822998
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image,",
+        "time": 1.0113542079925537
+      },
+      {
+        "question": "Is there a sink in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sink in the image.",
+        "time": 1.0686259269714355
+      },
+      {
+        "question": "Is there an umbrella in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is an umbrella in the",
+        "time": 0.9997057914733887
+      },
+      {
+        "question": "Is there a cell phone in the image?",
+        "image": "COCO_val2014_000000210789.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no cell phone in the image",
+        "time": 0.9444870948791504
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.9393579959869385
+      },
+      {
+        "question": "Is there a teddy bear in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no teddy bear in the",
+        "time": 0.9357297420501709
+      },
+      {
+        "question": "Is there a potted plant in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no potted plant in the",
+        "time": 0.9359378814697266
+      },
+      {
+        "question": "Is there a broccoli in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a broccoli in the",
+        "time": 0.9364099502563477
+      },
+      {
+        "question": "Is there a car in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no car in the image.",
+        "time": 0.9308950901031494
+      },
+      {
+        "question": "Is there an orange in the image?",
+        "image": "COCO_val2014_000000211674.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is an orange in the image.",
+        "time": 0.9279031753540039
+      },
+      {
+        "question": "Is there a dog in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a dog in the image.",
+        "time": 0.9282312393188477
+      },
+      {
+        "question": "Is there a toaster in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no toaster in the image",
+        "time": 0.9267539978027344
+      },
+      {
+        "question": "Is there a dining table in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a dining table in the",
+        "time": 0.9289970397949219
+      },
+      {
+        "question": "Is there a sports ball in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sports ball in the image",
+        "time": 0.9278969764709473
+      },
+      {
+        "question": "Is there a bed in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no bed in the image.",
+        "time": 0.9287219047546387
+      },
+      {
+        "question": "Is there a book in the image?",
+        "image": "COCO_val2014_000000283412.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a book in the image,",
+        "time": 0.9274909496307373
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9288330078125
+      },
+      {
+        "question": "Is there a carrot in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no carrot in the image",
+        "time": 0.9654238224029541
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.991339921951294
+      },
+      {
+        "question": "Is there a tv in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no TV in the image.",
+        "time": 0.952476978302002
+      },
+      {
+        "question": "Is there a cow in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a cow in the image,",
+        "time": 0.9282901287078857
+      },
+      {
+        "question": "Is there a potted plant in the image?",
+        "image": "COCO_val2014_000000140583.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no potted plant in the",
+        "time": 0.9282422065734863
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a man and a woman in",
+        "time": 0.9270451068878174
+      },
+      {
+        "question": "Is there a bottle in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bottle in the image",
+        "time": 0.929297924041748
+      },
+      {
+        "question": "Is there a bed in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bed in the image,",
+        "time": 0.9266152381896973
+      },
+      {
+        "question": "Is there a bench in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bench in the image",
+        "time": 0.9304368495941162
+      },
+      {
+        "question": "Is there a tie in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a tie in the image,",
+        "time": 0.9296112060546875
+      },
+      {
+        "question": "Is there a bird in the image?",
+        "image": "COCO_val2014_000000239347.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bird in the image.",
+        "time": 0.9313070774078369
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image.",
+        "time": 0.9297730922698975
+      },
+      {
+        "question": "Is there a bus in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bus in the image.",
+        "time": 0.929041862487793
+      },
+      {
+        "question": "Is there a sports ball in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a sports ball in the image",
+        "time": 0.9274990558624268
+      },
+      {
+        "question": "Is there a carrot in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no carrot in the image",
+        "time": 0.9282710552215576
+      },
+      {
+        "question": "Is there a tennis racket in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a tennis racket in the",
+        "time": 0.9336559772491455
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000080022.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no truck in the image",
+        "time": 0.9319281578063965
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9290459156036377
+      },
+      {
+        "question": "Is there a suitcase in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a suitcase in the image",
+        "time": 0.9318430423736572
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.930711030960083
+      },
+      {
+        "question": "Is there a toilet in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no toilet in the",
+        "time": 0.9305567741394043
+      },
+      {
+        "question": "Is there an airplane in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is an airplane in the image",
+        "time": 0.9289720058441162
+      },
+      {
+        "question": "Is there a bird in the image?",
+        "image": "COCO_val2014_000000013348.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bird in the image.",
+        "time": 0.9328491687774658
+      },
+      {
+        "question": "Is there a snowboard in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a snowboard in the image",
+        "time": 0.930264949798584
+      },
+      {
+        "question": "Is there a broccoli in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no broccoli in the",
+        "time": 0.9280078411102295
+      },
+      {
+        "question": "Is there a backpack in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a backpack in the image",
+        "time": 0.9403431415557861
+      },
+      {
+        "question": "Is there a bed in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bed in the image.",
+        "time": 0.9366781711578369
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image.",
+        "time": 0.9300868511199951
+      },
+      {
+        "question": "Is there a sheep in the image?",
+        "image": "COCO_val2014_000000094944.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sheep in the image.",
+        "time": 0.9396109580993652
+      },
+      {
+        "question": "Is there a backpack in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a backpack in the image",
+        "time": 0.9273717403411865
+      },
+      {
+        "question": "Is there a carrot in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no carrot in the image",
+        "time": 0.9302558898925781
+      },
+      {
+        "question": "Is there a bench in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no bench in the image",
+        "time": 0.993135929107666
+      },
+      {
+        "question": "Is there a baseball glove in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no baseball glove in the",
+        "time": 1.0056908130645752
+      },
+      {
+        "question": "Is there a laptop in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a laptop in the image,",
+        "time": 0.9654941558837891
+      },
+      {
+        "question": "Is there a knife in the image?",
+        "image": "COCO_val2014_000000032610.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no knife in the image",
+        "time": 0.9341938495635986
+      },
+      {
+        "question": "Is there a clock in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a clock in the image,",
+        "time": 0.981989860534668
+      },
+      {
+        "question": "Is there a train in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no train in the image.",
+        "time": 1.0358970165252686
+      },
+      {
+        "question": "Is there a bed in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bed in the image.",
+        "time": 0.9447529315948486
+      },
+      {
+        "question": "Is there a skateboard in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no skateboard in the",
+        "time": 0.9457290172576904
+      },
+      {
+        "question": "Is there a remote in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a remote control in the image",
+        "time": 0.9960041046142578
+      },
+      {
+        "question": "Is there a fork in the image?",
+        "image": "COCO_val2014_000000007795.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no fork in the image.",
+        "time": 0.9526619911193848
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 1.0242719650268555
+      },
+      {
+        "question": "Is there a scissors in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no scissors in the",
+        "time": 0.9452540874481201
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person walking down the street",
+        "time": 0.9818029403686523
+      },
+      {
+        "question": "Is there a pizza in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no pizza in the image",
+        "time": 0.9866957664489746
+      },
+      {
+        "question": "Is there an umbrella in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is an umbrella in the",
+        "time": 1.011197805404663
+      },
+      {
+        "question": "Is there a train in the image?",
+        "image": "COCO_val2014_000000288042.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no train in the image.",
+        "time": 1.0228021144866943
+      },
+      {
+        "question": "Is there a backpack in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a backpack in the image",
+        "time": 0.9549882411956787
+      },
+      {
+        "question": "Is there a frisbee in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no frisbee in",
+        "time": 1.0086548328399658
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a man in the image who",
+        "time": 1.011324167251587
+      },
+      {
+        "question": "Is there a dog in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no dog in the image.",
+        "time": 0.9616110324859619
+      },
+      {
+        "question": "Is there a couch in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a couch in the image",
+        "time": 1.045351266860962
+      },
+      {
+        "question": "Is there a stop sign in the image?",
+        "image": "COCO_val2014_000000018150.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no stop sign in the image",
+        "time": 0.9349398612976074
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9446473121643066
+      },
+      {
+        "question": "Is there a wine glass in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no wine glass in the image",
+        "time": 0.9290649890899658
+      },
+      {
+        "question": "Is there a bed in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bed in the image,",
+        "time": 0.9347379207611084
+      },
+      {
+        "question": "Is there a mouse in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no mouse in the image.",
+        "time": 0.9438560009002686
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no person in the image.",
+        "time": 0.9764108657836914
+      },
+      {
+        "question": "Is there a banana in the image?",
+        "image": "COCO_val2014_000000184338.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no banana in the image",
+        "time": 0.9372882843017578
+      },
+      {
+        "question": "Is there a traffic light in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a traffic light in the image",
+        "time": 0.9266889095306396
+      },
+      {
+        "question": "Is there a bicycle in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bicycle in the",
+        "time": 0.9886291027069092
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no person in the image.",
+        "time": 0.9304571151733398
+      },
+      {
+        "question": "Is there a sports ball in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sports ball in the image",
+        "time": 0.9359560012817383
+      },
+      {
+        "question": "Is there a train in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a train in the image,",
+        "time": 0.9357609748840332
+      },
+      {
+        "question": "Is there a baseball glove in the image?",
+        "image": "COCO_val2014_000000201148.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no baseball glove in the",
+        "time": 0.9296350479125977
+      },
+      {
+        "question": "Is there a tv in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a television in the image,",
+        "time": 0.9286830425262451
+      },
+      {
+        "question": "Is there an apple in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no apple in the image.",
+        "time": 0.9238622188568115
+      },
+      {
+        "question": "Is there a sink in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a sink in the image.",
+        "time": 0.9218108654022217
+      },
+      {
+        "question": "Is there a fork in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no fork in the image.",
+        "time": 0.931309700012207
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image,",
+        "time": 0.9263689517974854
+      },
+      {
+        "question": "Is there a tie in the image?",
+        "image": "COCO_val2014_000000017379.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a tie in the image,",
+        "time": 0.9221179485321045
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.926084041595459
+      },
+      {
+        "question": "Is there a microwave in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no microwave in the",
+        "time": 0.9364700317382812
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no person in the image.",
+        "time": 0.9357781410217285
+      },
+      {
+        "question": "Is there a remote in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a remote in the image,",
+        "time": 0.9231631755828857
+      },
+      {
+        "question": "Is there a sports ball in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no sports ball in the image",
+        "time": 0.9243009090423584
+      },
+      {
+        "question": "Is there a book in the image?",
+        "image": "COCO_val2014_000000015338.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no book in the image.",
+        "time": 0.923760175704956
+      },
+      {
+        "question": "Is there a bowl in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bowl in the image",
+        "time": 0.9249467849731445
+      },
+      {
+        "question": "Is there a broccoli in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no broccoli in the",
+        "time": 0.9263889789581299
+      },
+      {
+        "question": "Is there a sandwich in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a sandwich in the image",
+        "time": 0.9383690357208252
+      },
+      {
+        "question": "Is there a frisbee in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no frisbee in",
+        "time": 0.9242959022521973
+      },
+      {
+        "question": "Is there a hot dog in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no hot dog in the image",
+        "time": 0.9221792221069336
+      },
+      {
+        "question": "Is there a suitcase in the image?",
+        "image": "COCO_val2014_000000183965.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no suitcase in the image",
+        "time": 0.9361698627471924
+      },
+      {
+        "question": "Is there a clock in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a clock in the image,",
+        "time": 0.9238598346710205
+      },
+      {
+        "question": "Is there a toothbrush in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a toothbrush in",
+        "time": 0.9326636791229248
+      },
+      {
+        "question": "Is there a laptop in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a laptop in the image.",
+        "time": 0.9365360736846924
+      },
+      {
+        "question": "Is there a kite in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no kite in the image",
+        "time": 0.9252920150756836
+      },
+      {
+        "question": "Is there a dining table in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no dining table in the",
+        "time": 0.925757884979248
+      },
+      {
+        "question": "Is there a skateboard in the image?",
+        "image": "COCO_val2014_000000097994.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no skateboard in the",
+        "time": 0.9246163368225098
+      },
+      {
+        "question": "Is there a baseball glove in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a baseball glove in the",
+        "time": 0.9253931045532227
+      },
+      {
+        "question": "Is there a skis in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there are no skis in the image",
+        "time": 0.9290499687194824
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image,",
+        "time": 0.9232890605926514
+      },
+      {
+        "question": "Is there a train in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no train in the image.",
+        "time": 0.9272661209106445
+      },
+      {
+        "question": "Is there a sports ball in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a sports ball in the image",
+        "time": 0.927954912185669
+      },
+      {
+        "question": "Is there a spoon in the image?",
+        "image": "COCO_val2014_000000239773.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no spoon in the image",
+        "time": 0.9246692657470703
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9217936992645264
+      },
+      {
+        "question": "Is there a handbag in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no handbag in the image",
+        "time": 0.973703145980835
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a man in the image who",
+        "time": 0.9232170581817627
+      },
+      {
+        "question": "Is there a donut in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no donut in the image",
+        "time": 0.9330639839172363
+      },
+      {
+        "question": "Is there a motorcycle in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a motorcycle in the image",
+        "time": 0.9298989772796631
+      },
+      {
+        "question": "Is there a scissors in the image?",
+        "image": "COCO_val2014_000000245448.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no scissors in the",
+        "time": 0.9325110912322998
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image,",
+        "time": 0.925177812576294
+      },
+      {
+        "question": "Is there a skis in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no skis in the image",
+        "time": 0.931488037109375
+      },
+      {
+        "question": "Is there a bottle in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bottle in the image",
+        "time": 0.9381499290466309
+      },
+      {
+        "question": "Is there a bicycle in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bicycle in the",
+        "time": 0.9299793243408203
+      },
+      {
+        "question": "Is there a frisbee in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a frisbee in",
+        "time": 0.9238159656524658
+      },
+      {
+        "question": "Is there a carrot in the image?",
+        "image": "COCO_val2014_000000100238.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no carrot in the image",
+        "time": 0.9270262718200684
+      },
+      {
+        "question": "Is there a banana in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a banana in the image",
+        "time": 0.9286861419677734
+      },
+      {
+        "question": "Is there a snowboard in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no snowboard in the image",
+        "time": 0.9211137294769287
+      },
+      {
+        "question": "Is there a bowl in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bowl in the image",
+        "time": 0.9228260517120361
+      },
+      {
+        "question": "Is there a stop sign in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no stop sign in the image",
+        "time": 0.9292788505554199
+      },
+      {
+        "question": "Is there a cup in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a cup in the image,",
+        "time": 0.9274477958679199
+      },
+      {
+        "question": "Is there a tv in the image?",
+        "image": "COCO_val2014_000000312406.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no TV in the image.",
+        "time": 0.9262511730194092
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9296169281005859
+      },
+      {
+        "question": "Is there a skateboard in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no skateboard in the",
+        "time": 0.9607508182525635
+      },
+      {
+        "question": "Is there a car in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a car in the image,",
+        "time": 0.9892928600311279
+      },
+      {
+        "question": "Is there a bird in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bird in the image.",
+        "time": 0.9991497993469238
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.9612860679626465
+      },
+      {
+        "question": "Is there a dining table in the image?",
+        "image": "COCO_val2014_000000172648.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no dining table in the",
+        "time": 0.9341068267822266
+      },
+      {
+        "question": "Is there a bird in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bird in the image,",
+        "time": 0.937201976776123
+      },
+      {
+        "question": "Is there a chair in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no chair in the image.",
+        "time": 0.9316539764404297
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no truck in the image",
+        "time": 1.017104148864746
+      },
+      {
+        "question": "Is there a kite in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a kite in the image",
+        "time": 1.0381720066070557
+      },
+      {
+        "question": "Is there a car in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a car in the image.",
+        "time": 0.9396851062774658
+      },
+      {
+        "question": "Is there a tv in the image?",
+        "image": "COCO_val2014_000000263594.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no TV in the image.",
+        "time": 0.9345588684082031
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.9303207397460938
+      },
+      {
+        "question": "Is there an orange in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is an orange in the image,",
+        "time": 0.9318289756774902
+      },
+      {
+        "question": "Is there a bicycle in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a bicycle in the",
+        "time": 0.9318668842315674
+      },
+      {
+        "question": "Is there a sink in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sink in the image.",
+        "time": 0.9410398006439209
+      },
+      {
+        "question": "Is there a cell phone in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a cell phone in the image",
+        "time": 0.9362099170684814
+      },
+      {
+        "question": "Is there a potted plant in the image?",
+        "image": "COCO_val2014_000000076416.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a potted plant in the",
+        "time": 0.9219167232513428
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a woman in the image who",
+        "time": 0.9608089923858643
+      },
+      {
+        "question": "Is there a car in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no car in the image.",
+        "time": 1.0337121486663818
+      },
+      {
+        "question": "Is there a suitcase in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no suitcase in the image",
+        "time": 0.9325270652770996
+      },
+      {
+        "question": "Is there a toaster in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no toaster in the image",
+        "time": 0.980748176574707
+      },
+      {
+        "question": "Is there a handbag in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a handbag in the image",
+        "time": 1.0707790851593018
+      },
+      {
+        "question": "Is there a giraffe in the image?",
+        "image": "COCO_val2014_000000222118.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no giraffe in the",
+        "time": 1.0470199584960938
+      },
+      {
+        "question": "Is there a backpack in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a backpack in the image",
+        "time": 0.9453399181365967
+      },
+      {
+        "question": "Is there an oven in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no oven in the image",
+        "time": 1.0341739654541016
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image,",
+        "time": 0.9809458255767822
+      },
+      {
+        "question": "Is there an apple in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no apple in the image.",
+        "time": 0.9874930381774902
+      },
+      {
+        "question": "Is there a handbag in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a handbag in the image",
+        "time": 0.9473321437835693
+      },
+      {
+        "question": "Is there a cup in the image?",
+        "image": "COCO_val2014_000000016451.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a cup in the image,",
+        "time": 0.9431240558624268
+      },
+      {
+        "question": "Is there a truck in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a truck in the image",
+        "time": 0.9482719898223877
+      },
+      {
+        "question": "Is there a sink in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sink in the image.",
+        "time": 0.9551839828491211
+      },
+      {
+        "question": "Is there a clock in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a clock in the image,",
+        "time": 0.9379217624664307
+      },
+      {
+        "question": "Is there a sandwich in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no sandwich in the image",
+        "time": 0.9284012317657471
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.9538350105285645
+      },
+      {
+        "question": "Is there a scissors in the image?",
+        "image": "COCO_val2014_000000125572.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there are no scissors in the",
+        "time": 0.9764058589935303
+      },
+      {
+        "question": "Is there a spoon in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a spoon in the image",
+        "time": 0.9894521236419678
+      },
+      {
+        "question": "Is there a potted plant in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no potted plant in the",
+        "time": 0.9696199893951416
+      },
+      {
+        "question": "Is there a broccoli in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a broccoli in the",
+        "time": 0.9641427993774414
+      },
+      {
+        "question": "Is there a fire hydrant in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no fire hydrant in the",
+        "time": 0.9527602195739746
+      },
+      {
+        "question": "Is there a fork in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a fork in the image,",
+        "time": 0.9555819034576416
+      },
+      {
+        "question": "Is there a bear in the image?",
+        "image": "COCO_val2014_000000003845.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no bear in the image.",
+        "time": 0.9717879295349121
+      },
+      {
+        "question": "Is there a pizza in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a pizza in the image",
+        "time": 1.0060489177703857
+      },
+      {
+        "question": "Is there a carrot in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no carrot in the image",
+        "time": 0.9941678047180176
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a person in the image who",
+        "time": 0.9589769840240479
+      },
+      {
+        "question": "Is there a bottle in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a bottle in the image",
+        "time": 0.9591827392578125
+      },
+      {
+        "question": "Is there a cell phone in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a cell phone in the image",
+        "time": 0.967235803604126
+      },
+      {
+        "question": "Is there a suitcase in the image?",
+        "image": "COCO_val2014_000000122962.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no suitcase in the image",
+        "time": 0.9308092594146729
+      }
+    ]
+  }
+}
