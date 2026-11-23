@@ -209,6 +209,8 @@ def main():
     parser.add_argument("--output-dir", type=str, default="experiments/7b")
     parser.add_argument("--use-flash", action="store_true",
                         help="Use SDPA for non-hooked layers (recommended)")
+    parser.add_argument("--quantize", type=str, choices=["4bit", "8bit"], default=None,
+                        help="Quantize model to fit on smaller GPUs (4bit recommended for T4)")
     args = parser.parse_args()
 
     splits = list(POPE_SPLITS.keys()) if args.split == "all" else [args.split]
@@ -230,6 +232,7 @@ def main():
             config=config,
             dtype=torch.float16,
             use_flash=use_flash,
+            quantize=args.quantize,
         )
 
         if method_name == "vanilla":

@@ -22,7 +22,7 @@ from typing import Optional
 
 import torch
 import torch.nn.functional as F
-from transformers import AutoProcessor, LlavaForConditionalGeneration, LlavaProcessor, LlavaProcessor
+from transformers import AutoProcessor, BitsAndBytesConfig, LlavaForConditionalGeneration, LlavaProcessor, LlavaProcessor
 
 from cvg.approximation import SinglePassBranchApproximation
 from cvg.hooks import SingleLayerHook
@@ -68,6 +68,7 @@ class CVGModel:
         device: Optional[str] = None,
         dtype: Optional[torch.dtype] = None,
         use_flash: bool = False,
+        quantize: Optional[str] = None,
     ):
         self.config = config or CVGConfig()
         if device is not None:
@@ -84,17 +85,36 @@ class CVGModel:
 
         attn_impl = "sdpa" if use_flash else "eager"
 
-        print(f"Loading {model_name} on {self.device} ({dtype}, attn={attn_impl})...")
+        print(f"Loading {model_name} on {self.device} ({dtype}, attn={attn_impl}, quantize={quantize})...")
         auto_proc = AutoProcessor.from_pretrained(model_name)
         image_processor = auto_proc.image_processor
         tokenizer = auto_proc.tokenizer
 
-        self.model = LlavaForConditionalGeneration.from_pretrained(
-            model_name,
+        load_kwargs = dict(
             torch_dtype=dtype,
             low_cpu_mem_usage=True,
             attn_implementation=attn_impl,
-        ).to(self.device)
+        )
+
+        if quantize == "4bit":
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=dtype,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+            )
+            load_kwargs["quantization_config"] = bnb_config
+            load_kwargs["device_map"] = "auto"
+        elif quantize == "8bit":
+            bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+            load_kwargs["quantization_config"] = bnb_config
+            load_kwargs["device_map"] = "auto"
+
+        self.model = LlavaForConditionalGeneration.from_pretrained(
+            model_name, **load_kwargs
+        )
+        if quantize is None:
+            self.model = self.model.to(self.device)
 
         # Re-read patch_size from loaded model config
         vis_cfg = self.model.config.vision_config
