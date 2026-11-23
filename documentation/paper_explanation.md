@@ -1,362 +1,257 @@
-# Understanding the CVG Paper and Our CVG-E Research
+# CVG and CVG-E, Explained Simply
 
-## Part 1: The Original CVG Paper (What They Did)
+## The One-Minute Version
+
+- AI models that look at pictures and answer questions sometimes **make things up**. This is called **hallucination**.
+- A 2025 paper called **CVG** found a way to reduce this without retraining the model.
+- We built **CVG-E**, an improved version that tries to be **smarter** (better at choosing which parts of the image matter) and **faster** (less computer work per answer).
+- On a **small model (1.5B)**, both CVG and CVG-E made things **worse**. That was a surprising and useful finding.
+- We are now testing on a **bigger model (7B)**, the same size the CVG paper used. The normal model scored **89.4%**. The CVG and CVG-E results are still running.
+
+---
+
+## Words You Need to Know
+
+| Word | Simple meaning |
+| --- | --- |
+| **MLLM** | An AI that understands both pictures and text, such as LLaVA. |
+| **Hallucination** | The AI says something is in the picture when it is not. |
+| **Token** | A small piece of input. An image is cut into 576 small squares (patches), and each square is one "visual token". |
+| **Attention** | How much the model "looks at" each token when it answers. |
+| **Parameters (1.5B, 7B)** | The size of the model. 7B means 7 billion numbers inside it. Bigger is usually smarter but needs more memory. |
+| **Forward pass** | One full run of the model to produce an answer step. |
+| **Training-free** | No retraining needed. The trick is applied only when the model answers. |
+| **Vanilla** | The normal model with no tricks. Our baseline. |
+| **POPE** | A test with yes/no questions like "Is there a dog in the image?" Half the correct answers are "yes" and half are "no". |
+| **GPU / VRAM** | The graphics card that runs the model, and the memory on that card. |
+
+---
+
+## Part 1: The Original CVG Paper
 
 **Paper:** "Boosting Faithful Multi-Modal LLMs via Complementary Visual Grounding"
 **Authors:** Zheren Fu, Zhendong Mao, Lei Zhang, Yongdong Zhang (USTC)
 **Published in:** IEEE Transactions on Image Processing, Vol. 34, 2025
 
-### What is the Problem?
+### The Problem
 
-Multi-modal Large Language Models (MLLMs) like LLaVA can look at an image and answer questions about it. But they have a big problem called **hallucination** — they sometimes describe things that are NOT actually in the image.
+Show the AI a photo of a dog on a beach. It might say: "A woman is playing with a dog, and someone is surfing." There is no woman and no surfer. The AI invented them.
 
-For example, if you show a photo of a dog sitting on a beach, the model might say "A woman is sitting with a dog on the beach. She is about to throw a stick for the dog. Besides, someone is surfing on the beach." — but there is no woman, no stick, and no surfer. The model just made those up.
+This matters because people want to use these AIs in hospitals, cars and tools for blind users. Made-up answers there can cause real harm.
 
-This is dangerous because if we use these models in real applications (medical imaging, self-driving cars, etc.), wrong answers can cause real harm.
+### Why the AI Makes Things Up
 
-### Why Does Hallucination Happen?
+The CVG paper found two reasons.
 
-The CVG paper identifies **two root causes**:
+1. **Not enough visual clues.** When part of the image is unclear, the AI does not say "I am not sure." It guesses from what it learned from text. For example, "beach" often appears with "surfer", so it adds a surfer.
+2. **It stops looking at the picture.** In long answers, the AI looks at the image less and less. After about 30–40 words it is mostly writing from memory, not from the picture.
 
-**1. Insufficient Visual Context**
-When the question asks about something that is visually unclear or only partially visible, the model does not have enough visual information. So instead of saying "I'm not sure," it falls back on its language knowledge and guesses. These guesses are often wrong.
+### How CVG Fixes It (Three Steps)
 
-The authors proved this by masking (hiding) important parts of the image. When they masked the parts the model was looking at, hallucination increased a lot — much more than random masking. This shows the model really depends on specific visual regions, and when those regions are ambiguous, it hallucinates.
+Think of it like a **detective with two witnesses**.
 
-**2. Progressive Textual Drift**
-When the model generates long responses, its attention gradually shifts away from the image and toward its own generated text. After a few sentences, the model is basically ignoring the image and just writing based on language patterns. This causes more hallucination in longer responses.
+**Step 1 — Split the image (VTD: Visual Token Disentanglement).**
+CVG scores every image square by how important it is for the question. It keeps the top 70% as the **"good" set** and puts the bottom 30% in the **"bad" set**. This creates two witnesses:
+- The **good witness** sees only the important parts.
+- The **bad witness** sees only the unimportant parts, so it is likely to guess wrong.
 
-The authors showed this with an attention plot — visual attention starts strong but drops quickly after 30-40 tokens. And CHAIR benchmark data confirmed: longer responses have higher hallucination rates.
+**Step 2 — Keep the good witness focused (DAC: Dynamic Attention Calibration).**
+While the AI writes its answer, CVG pushes the good witness to keep looking at the image. It pushes the bad witness to look away. The push gets stronger as the answer gets longer. This fixes the "stops looking at the picture" problem.
 
-### What is CVG? (Their Solution)
+**Step 3 — Compare the two witnesses (GFF: Grounding Flow Fusion).**
+- If the two witnesses **disagree**, CVG trusts the good one and moves the answer *away* from what the bad one said. What the bad witness says is probably a made-up guess.
+- If they **agree**, the image is clear, so CVG simply uses the good witness.
 
-CVG stands for **Complementary Visual Grounding**. It is a "training-free" method — meaning you don't need to retrain the model, fine-tune anything, or use any external tools. It works at inference time (when the model is generating answers).
+### How Well CVG Worked
 
-CVG has **three modules**:
+- Tested on LLaVA models with 7B and 13B parameters.
+- Beat other methods (VCD, OPERA, PAI) on hallucination tests: POPE, CHAIR, AMBER, MME.
+- Also kept or improved general question-answering skills.
+- Cost: about **64% more computer work** than the normal model.
 
-#### Module 1: Visual Token Disentanglement (VTD)
+### CVG's Weak Spots
 
-The image goes through a vision encoder (like CLIP ViT) which converts it into a set of "visual tokens" — small patches of the image, each represented as a vector.
-
-VTD scores each visual token based on how important it is for answering the question. It uses two signals:
-
-- **Cross-attention score**: How much does the question text attend to this image patch? (Query relevance)
-- **Self-attention score**: How much does the [CLS] token in the vision encoder attend to this patch? (General visual importance)
-
-These are combined: `a = a_cross + a_self`
-
-Then, the top 70% (α = 0.7) become the **chosen set** (relevant patches) and the bottom 30% become the **rejected set** (irrelevant/distracting patches).
-
-Two separate branches are created:
-
-- **Chosen branch**: Keeps only the important patches, suppresses the rest
-- **Rejected branch**: Keeps only the unimportant patches, suppresses the rest
-
-#### Module 2: Dynamic Attention Calibration (DAC)
-
-As the model generates text token by token, DAC adjusts attention weights:
-
-- In the **chosen branch**: Visual attention is boosted (so the model keeps looking at the image)
-- In the **rejected branch**: Visual attention is reduced (so this branch drifts away from the image on purpose)
-
-The boost increases over time: `δ_t = β(1 - e^(-t/τ))` — this means the correction gets stronger as generation continues, specifically to fight the textual drift problem.
-
-This makes the two branches more different from each other, which helps the next module work better.
-
-#### Module 3: Grounding Flow Fusion (GFF)
-
-This is where the magic happens. The model generates two probability distributions — one from the chosen branch (should be correct) and one from the rejected branch (should be hallucination-prone).
-
-GFF compares these using **KL divergence** (a measure of how different two distributions are):
-
-- **If they disagree a lot** (KL > ε): The model uses contrastive decoding — it amplifies the chosen branch and subtracts the rejected branch's influence. This pushes the output away from hallucinated content.
-- **If they agree** (KL < ε): The visual context is clear, so just use the chosen branch as-is.
-
-Formula: `logit_final = logit_chosen + γ × (logit_chosen - logit_rejected)` when KL ≥ ε
-
-### Results in the Original Paper
-
-CVG was tested on LLaVA-1.5 (7B and 13B parameters) and LLaVA-Next (7B and 13B).
-
-**Key results:**
-
-- **POPE benchmark** (object hallucination): CVG beats Vanilla, VCD, OPERA, and PAI across all splits (random, popular, adversarial) on COCO, A-OKVQA, and GQA
-- **CHAIR benchmark** (image captioning): CVG produces the fewest hallucinated objects in generated descriptions
-- **AMBER benchmark** (multi-dimensional): Best discriminative accuracy across all tested models
-- **MME-Hal benchmark**: Highest hallucination mitigation scores
-- **General benchmarks** (VQA, TextVQA, MM-Bench, etc.): CVG also improves or maintains general task performance — it doesn't just reduce hallucination, it makes the model more accurate overall
-
-**Efficiency:** CVG adds about 64% more computation (FLOPs) compared to vanilla decoding, which is less than VCD (+100%). This is because each branch only processes half the visual tokens.
-
-### Known Limitations (from their paper)
-
-1. **TextVQA regression**: Text-containing image patches get low attention scores and end up in the rejected set, so CVG hurts performance on text-rich images
-2. **Fixed α**: The 70% token selection ratio is the same for all images, regardless of difficulty
-3. **Dual forward pass**: Even though each branch processes fewer tokens, running two passes still adds latency
+1. **Text in images gets thrown away.** Squares that contain writing get low scores and end up in the "bad" set. So CVG does worse on questions about text in pictures (the TextVQA test).
+2. **Always keeps exactly 70%.** It does not matter whether the image is simple or busy.
+3. **Runs the model twice.** One run for each witness, which makes it slower.
 
 ---
 
-## Part 2: What We Did (Our CVG-E Research)
+## Part 2: Our Work on a Small Model (1.5B)
 
-### Our Goal
+### Our Idea: CVG-E
 
-We wanted to study and extend the CVG framework. Our research paper is titled: **"CVG-E: Efficient Complementary Visual Grounding with Adaptive Token Selection and Single-Pass Approximation"**
+We named our version **CVG-E: Efficient Complementary Visual Grounding**. It has two improvements.
 
-### Our Two Proposed Improvements
+**Improvement A — Smarter choice of image squares**
 
-#### Improvement A: Adaptive Token Selection
+1. **Flexible keep-ratio (adaptive α).** We measure how spread-out the model's attention is.
+   - Attention spread over many squares means a busy, unclear image. We keep **more** squares (up to 85%).
+   - Attention focused on a few squares means a clear image. We keep **fewer** (down to 50%).
+2. **Protect text squares.** We detect squares that probably contain writing. Neighbouring letters look at each other strongly, so we can spot them. We raise their scores so they are not thrown away. This targets the TextVQA problem.
+3. **Fairer scoring (z-score).** CVG adds two scores with very different ranges, so one can drown out the other. We rescale both to the same range first, then mix them: 50% question-relevance, 30% general importance, 20% text-likeness.
 
-Instead of always picking the top 70% of tokens (fixed α), we made it adaptive:
+**Improvement B — Run the model once, not twice**
 
-1. **Entropy-adaptive α**: We calculate the entropy (disorder/uniformity) of the attention scores. If attention is spread evenly across many patches (high entropy = ambiguous scene), we keep more tokens. If attention is focused on a few patches (low entropy = clear scene), we prune more aggressively.
+Instead of a full second run for the bad witness, we **fake** it cheaply:
+1. Run the good witness normally.
+2. At one layer, take its attention and turn down the image part (×0.1) and turn up the text part (×10).
+3. Recompute only that one layer and the final output.
 
-   - Formula: `α = α_min + (α_max - α_min) × H(a)/log(N)`
-   - Range: α_min=0.5 to α_max=0.85
-2. **Text-patch protection**: We detect text-containing patches using a neighbor attention pattern (adjacent characters attend strongly to each other) and boost their scores so they don't get incorrectly rejected.
-3. **Z-score normalized hybrid scoring**: Instead of just adding cross-attention and self-attention, we normalize them (z-score) and use tunable weights: `a = 0.5×cross + 0.3×self + 0.2×text`
+This should cost about **1 layer of work instead of 22 layers**.
 
-#### Improvement B: Single-Pass Branch Approximation
+### Our Test Setup
 
-The biggest cost in CVG is running two full forward passes through the model. We tried to eliminate the rejected branch's forward pass:
-
-Instead of running the rejected branch through all 22 transformer layers, we:
-
-1. Take the chosen branch's attention weights at one layer
-2. Re-weight them — suppress visual token attention by 0.1× and amplify text attention by 10×
-3. Recompute only that one layer's output + the LM head
-4. Use this as an approximation of what the rejected branch would have produced
-
-This should theoretically be much cheaper (1 layer vs 22 layers).
-
-### Our Experimental Setup
-
-- **Model**: TinyLLaVA-1.5B (a small model — 1.5 billion parameters, vs the 7B-13B models in the original paper)
-- **Hardware**: Apple M1 Pro with 16GB RAM (consumer laptop, not a GPU server)
-- **Benchmark**: POPE random split, COCO val2014, 180 questions (30 images × 6 questions each)
-- **Why small model**: We wanted to test if CVG's approach works on smaller, more deployable models
+- **Model:** TinyLLaVA, 1.5B parameters. Small enough for a laptop.
+- **Computer:** MacBook with M1 Pro chip and 16 GB memory.
+- **Test:** 180 POPE yes/no questions on 30 COCO photos.
+- **Why small?** Phones and cheap devices need small models. Nobody had tested CVG on one.
 
 ### What We Found
 
-#### Finding 1: Contrastive Decoding Breaks on Small Models
+**Finding 1 — The normal model won.**
 
-This was our main finding — and it was unexpected.
+| Method | Gave a usable answer | Accuracy | Says "yes" | Time per question |
+| --- | --- | --- | --- | --- |
+| Vanilla (normal) | 180/180 | **86.7%** | 50% | 0.96 s |
+| CVG | 91/180 | 62.6% | 91% | 8.51 s |
+| CVG-E | 124/180 | 62.9% | 82% | 17.87 s |
 
-| Method  | Parseable       | Accuracy        | Precision       | Recall | Yes-ratio |
-| ------- | --------------- | --------------- | --------------- | ------ | --------- |
-| Vanilla | 180/180 (100%)  | **86.7%** | **86.7%** | 86.7%  | 50.0%     |
-| CVG     | 91/180 (50.6%)  | 62.6%           | 60.2%           | 98.0%  | 91.2%     |
-| CVG-E   | 124/180 (68.9%) | 62.9%           | 61.4%           | 89.9%  | 81.5%     |
+Both tricks made the small model **worse**, not better.
 
-**The vanilla model (no tricks, just normal decoding) easily beats both CVG and CVG-E.**
+**Finding 2 — The model broke down.**
+With CVG, about half the answers were unusable:
+- 53 times it just **repeated the question** back.
+- 36 times it gave **empty or nonsense** output.
 
-Both contrastive methods actually make the model *worse*, not better, on a 1.5B parameter model.
+CVG-E broke less often (31% vs 49%) because its change to the model is gentler.
 
-#### Finding 2: Generation Collapse
+**Finding 3 — It just said "yes" to everything.**
+A good model says "yes" about half the time, because half the correct answers are "yes". CVG said "yes" 91% of the time. That makes some numbers look good (it catches almost every real object) but it is cheating, not real improvement.
 
-CVG causes the model to produce garbage output 49% of the time:
+**Finding 4 — Our "faster" method was slower.**
+CVG-E was meant to be faster, but it took 17.87 s per question vs CVG's 8.51 s. The reason: to read attention from one layer, the standard setting (`output_attentions=True`) makes **all 22 layers** use a slow mode. We only needed one. We later fixed this (see Part 3).
 
-- **Question echoing** (53 out of 89 failures): The model just repeats the question back instead of answering
-- **Degenerate sequences** (36 out of 89): Empty or nonsensical output
+**Finding 5 — The "Goldilocks" problem.**
+- CVG's change is **too strong**: the witnesses disagree a lot, but the model breaks.
+- CVG-E's change is **too weak**: the model stays healthy, but the two witnesses barely disagree, so the trick never activates.
+- On a 1.5B model, there may be no "just right" setting.
 
-CVG-E is better (31% failure rate vs 49%) because single-layer re-weighting is a weaker perturbation.
+### Settings We Had to Change for the Small Model
 
-#### Finding 3: Yes-Bias (The "Mirage" Effect)
+The original settings broke the small model completely, so we softened them:
 
-Among the responses that ARE parseable, both methods show extreme "Yes" bias:
+| Setting | Original (7B) | Ours (1.5B) | Why |
+| --- | --- | --- | --- |
+| How hard to hide "bad" squares | 0.0 (delete) | 0.01 (dim) | Deleting confuses the model |
+| Strength of the comparison (γ) | 1.0 | 0.5 | Full strength overwhelms it |
+| When to start comparing (ε) | 0.01 | 0.1 | Otherwise it always fires |
+| Strength of the "keep looking" push (β) | 1.0 | 0.1 | Too much push over-corrects |
 
-- CVG: 91.2% of answers are "Yes" (should be 50%)
-- CVG-E: 81.5% of answers are "Yes" (should be 50%)
-- Vanilla: 50.0% (perfectly balanced)
+Even with these changes, the normal model still won.
 
-This means the contrastive methods aren't reducing hallucination — they're just making the model say "Yes" to everything. High recall (98% for CVG!) looks impressive until you realize it's because the model almost never says "No."
+### What We Learned From the Small Model
 
-#### Finding 4: The Latency Paradox
-
-| Method  | Time per question | Slowdown |
-| ------- | ----------------- | -------- |
-| Vanilla | 0.96s             | 1×      |
-| CVG     | 8.51s             | 8.9×    |
-| CVG-E   | 17.87s            | 18.6×   |
-
-CVG-E is supposed to be faster than CVG (that's the whole point of single-pass). But it's actually **slower**!
-
-Why? Because to get the attention weights from the model, we need to set `output_attentions=True`, which forces the model to use "eager attention" instead of efficient SDPA. This materializes huge attention matrices (1171×1171) at all 22 layers, every generation step — even though we only need 1 layer's attention.
-
-This is fixable with a hook-based implementation, and we have since built it (see Part 4).
-
-#### Finding 5: The Goldilocks Problem
-
-The KL divergence analysis shows the fundamental tension:
-
-- **CVG (dual-pass)**: KL ≈ 0.5 — strong contrastive signal, BUT destroys generation quality
-- **CVG-E (single-pass)**: KL < 0.01 — preserves generation quality, BUT no meaningful contrastive signal
-
-The minimum perturbation needed for useful contrastive decoding may be more than a 1.5B model can handle. There might be no "just right" operating point at this scale.
-
-### Small-Model Calibration (What We Had to Fix)
-
-The original CVG hyperparameters cause complete generation collapse on 1.5B models. We had to recalibrate:
-
-| Parameter                 | Original (7B)  | Our Fix (1.5B)    | Why                                        |
-| ------------------------- | -------------- | ----------------- | ------------------------------------------ |
-| Suppress factor           | 0.0 (zero out) | 0.01 (scale down) | Zeroing creates out-of-distribution inputs |
-| γ (contrastive strength) | 1.0            | 0.5               | Full strength overwhelms small model       |
-| ε (KL threshold)         | 0.01           | 0.1               | Low threshold = contrastive always fires   |
-| β (DAC strength)         | 1.0            | 0.1               | Full calibration over-corrects             |
-
-Even with these fixes, the methods still underperform vanilla. The calibration is necessary but not sufficient.
-
-### Our Contributions (What We Added to Knowledge)
-
-1. **First CVG/CVG-E implementation tested at ≤2B scale** — showing that contrastive decoding methods designed for 7B+ don't work at small scale
-2. **Small-model calibration strategies** — the specific parameter changes needed to avoid complete collapse
-3. **Failure mode characterization** — documenting question echoing, degenerate outputs, and Yes-bias as distinct failure modes
-4. **Latency inversion documentation** — showing that eager attention bottleneck can negate single-pass speedup
-5. **The "narrow operating range" hypothesis** — that contrastive decoding may have no viable operating point on small models
+1. This is the first test of CVG-style methods on a model of 2B or fewer parameters. **They do not work at that size.**
+2. We list the setting changes needed so the small model does not break.
+3. We describe exactly *how* it fails: repeating the question, nonsense output, and saying "yes" too often.
+4. We show that a "single-pass" method can end up slower if attention is read the wrong way.
+5. Small models may simply be too fragile for this kind of trick.
 
 ---
 
-## Part 3: The Process We Followed
+## Part 3: Moving to a Bigger Model (7B) — Current Work
 
-### Step 1: Literature Review
+### Why
 
-- Read the original CVG paper thoroughly
-- Studied related work: VCD, ICD, M3ID, OPERA, PAI, AttnReal, ASCD, DaID
-- Identified CVG's three limitations (fixed α, text regression, dual-pass cost)
-- Conducted deep research on latest MLLM hallucination mitigation advances (2024-2026)
+The CVG paper only tested 7B and bigger. So the fair question is: **does CVG-E work at the size CVG was built for?**
 
-### Step 2: Implementation
+### Step 1 — Fixed the speed problem
 
-- Set up TinyLLaVA-1.5B on M1 Pro with MPS backend
-- Implemented CVG from scratch based on the paper's description (no official code available for our model)
-- Built all three modules: VTD, DAC, GFF
-- Fixed GQA compatibility (32 query heads, 4 KV heads — needed repeat_interleave)
+We built a **single-layer hook** (`SingleLayerHook` in `cvg/hooks.py`).
+- Before: all layers switched to slow mode just so we could read one layer.
+- Now: **only the one layer we need** uses slow mode. All other layers stay fast.
 
-### Step 3: CVG-E Extensions
+Think of it like this: before, we stopped every car on the motorway to check one. Now we stop only that car.
 
-- Implemented entropy-adaptive α calculation
-- Built text-patch protection scoring
-- Implemented z-score normalized hybrid scoring
-- Built the single-pass branch approximation (Algorithm 1 in our paper)
+### Step 2 — Moved to LLaVA-1.5-7B
 
-### Step 4: Calibration
+The 7B model has 32 layers (the small one had 22). We picked the same layers the CVG paper used:
 
-- Discovered original CVG parameters cause complete generation collapse on 1.5B
-- Systematically identified four parameter changes needed
-- Tested and validated the recalibrated configuration
-
-### Step 5: Experiments
-
-- Ran vanilla baseline on N=180 POPE questions
-- Ran CVG on N=180 POPE questions (took ~25 minutes, 8.5s per question)
-- Ran CVG-E on N=180 POPE questions (took ~54 minutes, 17.9s per question)
-- All results saved as JSON with per-question details
-
-### Step 6: Analysis
-
-- Built analysis script with Wilson score confidence intervals
-- Computed all metrics: accuracy, precision, recall, F1, yes-ratio
-- Generated confusion matrices
-- Classified failure modes (echo vs degenerate)
-- Analyzed KL divergence patterns
-
-### Step 7: Paper Writing
-
-- Wrote the full LaTeX paper (7 pages, IEEE format)
-- Created TikZ diagrams: pipeline comparison, bar charts, stacked bars, KL divergence plot
-- Included all tables with confidence intervals
-- Compiled to clean PDF
-
-### Step 8: Presentation
-
-- Created 14-slide presentation (PPTX + PDF)
-- Dark navy theme with accent colors
-- Covers: introduction, challenges, problem, related work, methodology, results, failure analysis, latency, 7B scale-up, publication status, next steps
-
----
-
-## Part 4: Scaling Up to LLaVA-1.5-7B (Current Phase)
-
-The 1.5B results raised one clear question: is the failure caused by CVG itself, or by the small model? The original paper only tested 7B and 13B models. To answer this fairly, we moved our experiments to the same model size the paper used.
-
-### Step 9: Fixing the Latency Problem (Hook-Based Attention)
-
-The 1.5B experiments showed CVG-E was *slower* than CVG because `output_attentions=True` forced every layer to use slow "eager" attention. We rebuilt the attention extraction:
-
-- **`SingleLayerHook`** (in `cvg/hooks.py`) attaches to **one** transformer layer only.
-- Only that one layer switches to eager attention, so we can read its attention weights.
-- All other layers keep using fast SDPA / Flash Attention.
-- The rejected branch is then approximated from that one layer's captured attention and hidden state.
-
-This removes the O(n²) cost at every layer that made CVG-E 18.6× slower than vanilla.
-
-### Step 10: Porting to LLaVA-1.5-7B
-
-LLaVA-1.5-7B has 32 language-model layers and 24 vision-encoder layers (vs 22 in TinyLLaVA). We set the layer choices to match the original paper's setup:
-
-| Setting | Layers used |
+| Job | Layers |
 | --- | --- |
-| Cross-attention (VTD query relevance) | 19, 20, 21, 22 |
-| Self-attention (VTD [CLS] importance) | 16, 17, 18 |
-| DAC calibration | 20 – 31 |
-| CVG-E single-pass approximation | 28 – 31 |
+| Score image squares by question relevance | 19–22 |
+| Score image squares by general importance | 16–18 |
+| "Keep looking at the image" push | 20–31 |
+| CVG-E's cheap fake second witness | 28–31 |
 
-The two new configs are `cvg_7b` and `cvg_e_7b` in `cvg/modules.py`. At 7B we use the **original** CVG hyperparameters, not the small-model calibration, because the original values were designed for this size.
+At 7B we use the **original** CVG settings, not the softened small-model ones.
 
-### Step 11: Running on a Cloud GPU (Google Colab)
+### Step 3 — Moved to a cloud computer
 
-A 7B model does not fit on the M1 laptop, so we built a Colab notebook (`notebooks/cvg_e_7b_experiments.ipynb`) and an evaluation script (`scripts/run_7b_eval.py`):
+A 7B model is too big for the laptop, so we use **Google Colab**, a free online computer with an **NVIDIA T4** graphics card (15 GB memory).
+- The test is now much bigger: **3,000 questions** instead of 180.
 
-- **GPU:** NVIDIA Tesla T4 (15 GB VRAM), free Colab tier
-- **Benchmark:** full POPE COCO splits — **3,000 questions per split** (vs 180 before)
-- **Metrics:** accuracy, precision, recall, F1, yes-ratio, 95% Wilson confidence intervals, time per question
+### Step 4 — First result: the normal 7B model
 
-### Step 12: First 7B Result — Vanilla Baseline
+| Method | Usable answers | Accuracy | Precision | Recall | F1 | Says "yes" | Time per question |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Vanilla 7B | 3000/3000 | **89.4%** | 91.3% | 87.1% | 89.1% | 47.7% | 1.16 s |
 
-| Method | Split | Parseable | Accuracy | Precision | Recall | F1 | Yes-ratio | Time/q |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Vanilla (fp16) | COCO random | 3000/3000 | **89.4%** | 91.3% | 87.1% | 89.1% | 47.7% | 1.16s |
+This matches what other researchers report for this model (about 88–90%). So **our setup is working correctly**.
 
-This matches the vanilla LLaVA-1.5-7B numbers reported in the literature (around 88–90%), which confirms our pipeline is correct. Every answer was parseable, and the yes-ratio is close to the ideal 50%.
+### Step 5 — Ran out of memory, then fixed it
 
-### Step 13: Out-of-Memory Problem and the 4-bit Fix
+- The 7B model alone fills about **14 GB of the 15 GB** card.
+- CVG needs room for a second run. CVG-E needs room for one big attention table. **Neither fits.**
+- Every question crashed. The results showed 50% accuracy and 0 "yes" answers. **Those results are meaningless and we deleted them.**
 
-Our first CVG and CVG-E runs on the T4 failed:
+**Fix: shrink the model (4-bit quantization).**
+Every number in the model is stored with less precision, like saving a photo as a smaller JPEG. The model drops to about **5 GB**, which leaves room for CVG and CVG-E.
+- New option: `--quantize 4bit`
+- The Colab notebook now uses it for CVG and CVG-E automatically.
 
-- The 7B model in fp16 uses about **14 GB** of the T4's 15 GB.
-- CVG needs a second forward pass, and CVG-E needs one layer's full attention matrix. Neither fits in the remaining ~1 GB.
-- Every question hit a CUDA out-of-memory error. The script caught the error, and the result showed 50% accuracy with 0% recall. **These numbers are invalid and were discarded.**
+**Fairness:** the normal model ran at full size, but CVG and CVG-E run shrunk. For the final paper we will also run the normal model shrunk, so all three are compared equally.
 
-**Fix:** we added 4-bit quantization (NF4, via `bitsandbytes`) with a new `--quantize 4bit` option. This shrinks the model to about **5 GB**, which leaves enough memory for the contrastive branches. The notebook now installs `bitsandbytes` and uses 4-bit for CVG and CVG-E automatically.
-
-**Fairness note:** vanilla ran in fp16 and CVG/CVG-E will run in 4-bit. For the final paper we will also run vanilla in 4-bit, so every method is compared at the same precision.
-
-### What Is Still Pending
+### What Is Still To Do
 
 | Experiment | Status |
 | --- | --- |
-| Vanilla 7B, COCO random | Done (89.4%) |
-| CVG 7B (4-bit), COCO random | Waiting for Colab GPU quota |
-| CVG-E 7B (4-bit), COCO random | Waiting for Colab GPU quota |
-| Vanilla 7B (4-bit), for fair comparison | Planned |
-| Popular + adversarial splits, all methods | Planned |
-| CHAIR, AMBER, TextVQA | Planned |
-| VCD baseline | Planned |
+| Normal 7B model, COCO random | Done (89.4%) |
+| CVG 7B (shrunk) | Waiting for free Colab time |
+| CVG-E 7B (shrunk) | Waiting for free Colab time |
+| Normal 7B (shrunk), for fair comparison | Planned |
+| Harder question sets (popular, adversarial) | Planned |
+| Other tests: CHAIR, AMBER, TextVQA | Planned |
+| Compare with another method (VCD) | Planned |
 
-### What We Expect to Show at 7B
+### What We Hope to Show
 
-1. **Accuracy:** CVG-E should match or beat CVG, because adaptive α and text-patch protection keep more useful tokens.
-2. **Speed:** CVG-E should now be clearly faster than CVG, because the hook-based single-pass avoids the second full forward pass.
-3. **Scale effect:** comparing 1.5B (failure) with 7B (expected success) shows where contrastive decoding starts working.
+1. **Accuracy:** CVG-E is as good as CVG or better, because it chooses image squares more cleverly.
+2. **Speed:** CVG-E is clearly faster than CVG, because it no longer runs the model twice.
+3. **Size matters:** the same method fails at 1.5B but works at 7B. This tells researchers how big a model must be before these tricks help.
 
 ---
 
-## Key Takeaway
+## How We Did the Work (Step by Step)
 
-**The original CVG paper shows an excellent method that works great on large (7B-13B) models.** It is published in a top journal (IEEE TIP) and achieves state-of-the-art results.
+1. **Read the research.** Studied the CVG paper and related methods (VCD, ICD, M3ID, OPERA, PAI, AttnReal, ASCD, DaID). Found CVG's three weak spots.
+2. **Built CVG from scratch** for TinyLLaVA, since there was no ready-made code for that model.
+3. **Built CVG-E's additions:** flexible keep-ratio, text protection, fair scoring and the single-pass trick.
+4. **Tuned settings** so the small model did not break.
+5. **Ran tests:** 180 questions for each method on the laptop.
+6. **Analysed results:** accuracy, error ranges, how often it said "yes", and the types of failure.
+7. **Wrote the paper:** 7 pages in IEEE format, with diagrams and tables.
+8. **Made the presentation:** 15 slides.
+9. **Fixed the speed problem** with the single-layer hook.
+10. **Moved to the 7B model** on Google Colab.
+11. **Got the 7B normal-model result:** 89.4%.
+12. **Hit the memory problem** and fixed it by shrinking the model to 4-bit.
 
-**Our CVG-E work shows that this approach has boundary conditions.** When you try to use contrastive decoding on small (1.5B) models — which are more practical for real-world deployment — the method fails. The perturbation that creates a useful contrastive signal also destroys the model's ability to generate coherent text.
+---
 
-This is valuable because it tells the research community: contrastive decoding for hallucination mitigation is model-size dependent. Future work needs to find methods that work at small scale too, or find the minimum model size where contrastive decoding starts working.
+## The Big Picture
 
-**Our current phase tests CVG-E at 7B**, the scale CVG was designed for. We fixed the latency bottleneck with a single-layer hook, built a cloud-GPU pipeline, and confirmed a correct vanilla baseline (89.4% on 3,000 POPE questions). The CVG and CVG-E 7B runs, now using 4-bit quantization, will show whether CVG-E can match CVG's accuracy while being faster.
+- **CVG is a good method for big models.** It was published in a top journal and beats other methods at 7B and 13B.
+- **On small models it breaks.** The change needed to catch made-up answers also stops the small model from writing sensible answers.
+- **We are now checking CVG-E on a big model.** We want to show it is as accurate as CVG but faster. The setup is ready and the baseline (89.4%) is correct. We are waiting for the CVG and CVG-E runs.
