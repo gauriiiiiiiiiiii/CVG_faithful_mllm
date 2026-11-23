@@ -25,7 +25,7 @@ DIM        = RGBColor(0x7B, 0x85, 0x9E)
 CARD_BORDER= RGBColor(0x2A, 0x34, 0x50)
 DARK_CARD  = RGBColor(0x14, 0x1E, 0x33)
 
-TOTAL_SLIDES = 14
+TOTAL_SLIDES = 15
 
 
 def add_bg(slide):
@@ -234,8 +234,9 @@ for i, (q, c) in enumerate([
     ("RQ1: Does CVG's contrastive decoding transfer to 1.5B-parameter models?", CORAL),
     ("RQ2: Can single-pass attention re-weighting replace the expensive dual forward pass?", LAVENDER),
     ("RQ3: Can entropy-adaptive token selection improve robustness across image types?", MINT),
+    ("RQ4: At 7B scale, does CVG-E match CVG's accuracy while running faster?", TEAL),
 ]):
-    y = 5.4 + i * 0.42
+    y = 5.35 + i * 0.34
     dot(sl, 1.2, y + 0.03, 0.25, c)
     txt(sl, 1.55, y, 10.5, 0.35, q, sz=14, c=SOFT_WHITE)
 
@@ -572,18 +573,81 @@ bul(sl, 7.1, 2.2, 5.0, 2.2, [
 ], sz=13)
 
 card(sl, 0.8, 4.8, 11.7, 1.8, fc=DARK_CARD, bc=MINT)
-txt(sl, 1.2, 4.9, 11, 0.35, "Path to Recovery", sz=17, b=True, c=MINT)
+txt(sl, 1.2, 4.9, 11, 0.35, "Fix Implemented: Single-Layer Hook", sz=17, b=True, c=MINT)
 bul(sl, 1.2, 5.3, 11, 1.0, [
-    "Hook-based implementation: intercept attention at a SINGLE layer → eliminate O(n²) overhead",
-    "Multi-layer re-weighting (2-5 layers): may find viable D_KL range between 0.01 and 0.5",
-    "With Flash Attention + selective output: expected overhead ~15-25% (vs current 16×)",
+    "SingleLayerHook (cvg/hooks.py): eager attention on ONE layer only; all other layers keep SDPA / Flash Attention",
+    "Captures that layer's attention weights + input hidden state → rejected branch approximated without a 2nd pass",
+    "Removes the O(n²)-at-every-layer cost behind the 18.6× slowdown; being validated at 7B scale (next slide)",
 ], sz=13)
 
 # ════════════════════════════════════════
-# 12. PUBLICATION
+# 12. SCALING TO 7B
 # ════════════════════════════════════════
 sl = prs.slides.add_slide(prs.slide_layouts[6])
-header(sl, "Publication", "Paper Status & Target Venues", 12)
+header(sl, "Scaling to 7B", "LLaVA-1.5-7B on Cloud GPU — Same Scale as the Original CVG Paper", 12)
+
+card(sl, 0.8, 1.5, 4.6, 3.0, bc=TEAL)
+txt(sl, 1.1, 1.6, 4.2, 0.4, "Setup", sz=18, b=True, c=TEAL)
+accent(sl, 1.1, 2.0, 1.5, TEAL)
+setup = [
+    ("Model", "llava-hf/llava-1.5-7b-hf"),
+    ("Layers", "32 LM  ·  24 ViT"),
+    ("VTD cross", "layers 19–22"),
+    ("VTD self", "layers 16–18"),
+    ("DAC", "layers 20–31"),
+    ("CVG-E approx", "layers 28–31"),
+    ("GPU", "Colab Tesla T4, 15 GB"),
+    ("Benchmark", "POPE COCO, 3,000 q / split"),
+]
+for i, (k, v) in enumerate(setup):
+    y = 2.15 + i * 0.28
+    txt(sl, 1.1, y, 1.6, 0.25, k, sz=11, b=True, c=DIM)
+    txt(sl, 2.7, y, 2.6, 0.25, v, sz=11, c=SOFT_WHITE)
+
+card(sl, 5.7, 1.5, 6.8, 3.0, bc=LAVENDER)
+txt(sl, 6.0, 1.6, 6.3, 0.4, "POPE COCO Random — 7B Results", sz=18, b=True, c=LAVENDER)
+accent(sl, 6.0, 2.0, 2.5, LAVENDER)
+h7 = ["Method", "Acc %", "Prec %", "Rec %", "F1 %", "Yes %", "Time/q"]
+cx7 = [6.0, 7.45, 8.25, 9.05, 9.85, 10.65, 11.45]
+for i, h in enumerate(h7):
+    txt(sl, cx7[i], 2.15, 1.0, 0.3, h, sz=11, b=True, c=TEAL)
+rows7 = [
+    (["Vanilla", "89.4", "91.3", "87.1", "89.1", "47.7", "1.16s"], MINT, SOFT_WHITE),
+    (["CVG", "pending", "", "", "", "", ""], GOLD, DIM),
+    (["CVG-E", "pending", "", "", "", "", ""], LAVENDER, DIM),
+]
+for ri, (vals, rc, vc) in enumerate(rows7):
+    y = 2.55 + ri * 0.4
+    for ci, v in enumerate(vals):
+        txt(sl, cx7[ci], y, 1.0, 0.3, v, sz=13, b=(ci == 0), c=rc if ci == 0 else vc)
+bul(sl, 6.0, 3.8, 6.3, 0.6, [
+    "Vanilla: 3000/3000 parseable, balanced yes-ratio — matches published LLaVA-1.5-7B (~88–90%)",
+    "CVG / CVG-E: re-running with 4-bit quantization (waiting on GPU quota)",
+], sz=11, c=SOFT_WHITE, sp=Pt(2))
+
+card(sl, 0.8, 4.8, 5.6, 2.1, bc=CORAL)
+txt(sl, 1.1, 4.9, 5.0, 0.35, "Finding: Out-of-Memory on T4", sz=16, b=True, c=CORAL)
+bul(sl, 1.1, 5.3, 5.0, 1.5, [
+    "7B fp16 weights use ~14 GB of the T4's 15 GB",
+    "No room for CVG's 2nd pass or CVG-E's attention map",
+    "Every question OOM'd → 50% acc, 0% recall",
+    "Those runs are invalid and were discarded",
+], sz=12)
+
+card(sl, 6.8, 4.8, 5.7, 2.1, bc=MINT)
+txt(sl, 7.1, 4.9, 5.0, 0.35, "Fix: 4-bit NF4 Quantization", sz=16, b=True, c=MINT)
+bul(sl, 7.1, 5.3, 5.2, 1.5, [
+    "bitsandbytes NF4 + double quant → model ~5 GB",
+    "New flag: --quantize 4bit (cvg/model.py, run_7b_eval.py)",
+    "Notebook applies it to CVG and CVG-E automatically",
+    "Vanilla will also be re-run in 4-bit for a fair comparison",
+], sz=12)
+
+# ════════════════════════════════════════
+# 13. PUBLICATION
+# ════════════════════════════════════════
+sl = prs.slides.add_slide(prs.slide_layouts[6])
+header(sl, "Publication", "Paper Status & Target Venues", 13)
 
 card(sl, 0.8, 1.5, 7.5, 2.8, bc=TEAL)
 txt(sl, 1.1, 1.6, 7.0, 0.4, "Paper Details", sz=18, b=True, c=TEAL)
@@ -593,7 +657,7 @@ bul(sl, 1.1, 2.15, 7.0, 2.0, [
     "          with Adaptive Token Selection and Single-Pass Approximation",
     "Authors: Dr. Gulab Sah, Gauri Agarwal, Anirudh Agarwal",
     "Length: 7 pages  |  15 references  |  4 figures  |  5 tables",
-    "Status: Draft complete, N=180 experiments in progress",
+    "Status: 1.5B study complete; 7B experiments in progress",
 ], sz=14)
 
 # Progress tracker
@@ -601,11 +665,12 @@ card(sl, 8.7, 1.5, 3.8, 2.8, bc=MINT)
 txt(sl, 9.0, 1.6, 3.3, 0.35, "Progress Tracker", sz=16, b=True, c=MINT)
 accent(sl, 9.0, 1.95, 1.5, MINT)
 items = [
-    ("Implementation", MINT), ("Vanilla eval", MINT), ("CVG eval", MINT),
-    ("CVG-E eval", GOLD), ("Paper draft", GOLD), ("Submission", DIM),
+    ("1.5B study (N=180)", MINT), ("Hook-based single pass", MINT), ("7B port + Colab pipeline", MINT),
+    ("7B vanilla (89.4%)", MINT), ("7B CVG / CVG-E (4-bit)", GOLD), ("CHAIR / AMBER / TextVQA", DIM),
+    ("Submission", DIM),
 ]
 for i, (item, c) in enumerate(items):
-    y = 2.1 + i * 0.33
+    y = 2.05 + i * 0.31
     dot(sl, 9.1, y + 0.05, 0.13, c)
     txt(sl, 9.35, y, 3.0, 0.3, item, sz=12, c=SOFT_WHITE)
 
@@ -614,9 +679,9 @@ card(sl, 0.8, 4.6, 5.6, 2.3, bc=GOLD)
 txt(sl, 1.1, 4.7, 5.0, 0.35, "Novel Contributions", sz=16, b=True, c=GOLD)
 bul(sl, 1.1, 5.1, 5.0, 1.5, [
     "First evaluation of contrastive decoding at ≤2B scale",
-    "Negative result with practical significance",
-    "Open-source CVG/CVG-E implementation",
-    "Calibration guidelines for small models",
+    "Single-layer hook: true single-pass CVG-E",
+    "1.5B vs 7B scale comparison of CVG / CVG-E",
+    "Open-source CVG/CVG-E + calibration guidelines",
 ], sz=13)
 
 card(sl, 6.8, 4.6, 5.6, 2.3, bc=LAVENDER)
@@ -629,38 +694,38 @@ bul(sl, 7.1, 5.1, 5.0, 1.5, [
 ], sz=13)
 
 # ════════════════════════════════════════
-# 13. NEXT 2-MONTH PLAN
+# 14. NEXT 2-MONTH PLAN
 # ════════════════════════════════════════
 sl = prs.slides.add_slide(prs.slide_layouts[6])
-header(sl, "Next 2-Month Plan", "December 2026 — January 2027", 13)
+header(sl, "Next 2-Month Plan", "December 2026 — January 2027", 14)
 
 card(sl, 0.8, 1.5, 5.6, 4.0, bc=MINT)
 txt(sl, 1.1, 1.6, 5.0, 0.4, "Month 1 — December 2026", sz=18, b=True, c=MINT)
 accent(sl, 1.1, 2.0, 2.5, MINT)
 
-txt(sl, 1.1, 2.15, 5.0, 0.3, "Week 1-2: Complete Experiments", sz=14, b=True, c=WHITE)
+txt(sl, 1.1, 2.15, 5.0, 0.3, "Week 1-2: Finish 7B POPE", sz=14, b=True, c=WHITE)
 bul(sl, 1.1, 2.5, 5.0, 1.0, [
-    "Finish CVG-E N=180 evaluation",
-    "POPE adversarial and popular splits",
-    "Hook-based attention extraction (fix 16× bottleneck)",
+    "CVG + CVG-E (4-bit) on COCO random",
+    "Vanilla in 4-bit for same-precision comparison",
+    "Popular + adversarial splits for all methods",
 ], sz=12)
 
 txt(sl, 1.1, 3.5, 5.0, 0.3, "Week 3-4: Extend Benchmarks", sz=14, b=True, c=WHITE)
 bul(sl, 1.1, 3.85, 5.0, 1.0, [
-    "CHAIR and AMBER benchmarks",
-    "Multi-layer re-weighting (2-5 layers)",
-    "Hyperparameter sweep (ε, γ, λ, suppress)",
+    "CHAIR and AMBER on 7B",
+    "TextVQA (validate text-patch protection)",
+    "VCD baseline comparison",
 ], sz=12)
 
 card(sl, 6.8, 1.5, 5.6, 4.0, bc=LAVENDER)
 txt(sl, 7.1, 1.6, 5.0, 0.4, "Month 2 — January 2027", sz=18, b=True, c=LAVENDER)
 accent(sl, 7.1, 2.0, 2.5, LAVENDER)
 
-txt(sl, 7.1, 2.15, 5.0, 0.3, "Week 5-6: Scale Up", sz=14, b=True, c=WHITE)
+txt(sl, 7.1, 2.15, 5.0, 0.3, "Week 5-6: Ablations & Latency", sz=14, b=True, c=WHITE)
 bul(sl, 7.1, 2.5, 5.0, 1.0, [
-    "Test on LLaVA-1.5-7B model",
-    "CVG-E vs CVG at 7B scale comparison",
-    "TextVQA evaluation (text-patch protection)",
+    "Ablate each CVG-E component at 7B",
+    "Latency profiling: CVG vs CVG-E vs vanilla",
+    "Multi-layer re-weighting at 1.5B (Goldilocks gap)",
 ], sz=12)
 
 txt(sl, 7.1, 3.5, 5.0, 0.3, "Week 7-8: Finalize & Submit", sz=14, b=True, c=WHITE)
@@ -674,15 +739,15 @@ bul(sl, 7.1, 3.85, 5.0, 1.0, [
 # Timeline
 card(sl, 0.8, 5.8, 11.7, 1.2, fc=DARK_CARD)
 milestones = [
-    ("Dec W2", "All POPE done", TEAL),
-    ("Dec W4", "CHAIR + AMBER", MINT),
-    ("Jan W2", "7B results", LAVENDER),
+    ("Dec W2", "7B POPE done", TEAL),
+    ("Dec W4", "CHAIR/AMBER/TextVQA", MINT),
+    ("Jan W2", "Ablations + VCD", LAVENDER),
     ("Jan W4", "Paper submitted", GOLD),
 ]
 for i, (date, task, c) in enumerate(milestones):
     x = 1.2 + i * 2.9
     d = dot(sl, x, 6.05, 0.22, c)
-    txt(sl, x + 0.3, 6.0, 2.2, 0.2, date, sz=12, b=True, c=c)
+    txt(sl, x + 0.3, 5.82, 2.2, 0.2, date, sz=12, b=True, c=c)
     txt(sl, x + 0.3, 6.25, 2.2, 0.2, task, sz=11, c=SOFT_WHITE)
     if i < 3:
         line = sl.shapes.add_shape(MSO_SHAPE.RECTANGLE,
@@ -690,7 +755,7 @@ for i, (date, task, c) in enumerate(milestones):
         line.fill.solid(); line.fill.fore_color.rgb = CARD_BORDER; line.line.fill.background()
 
 # ════════════════════════════════════════
-# 14. THANK YOU
+# 15. THANK YOU
 # ════════════════════════════════════════
 sl = prs.slides.add_slide(prs.slide_layouts[6]); add_bg(sl)
 ghost_circle(sl, 1.5, 4.5, 2.5, TEAL)

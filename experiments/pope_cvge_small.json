@@ -1,0 +1,177 @@
+{
+  "cvg_e_small": {
+    "accuracy": 80.0,
+    "precision": 87.5,
+    "recall": 70.0,
+    "f1": 77.77777777777777,
+    "yes_ratio": 40.0,
+    "tp": 7,
+    "fp": 1,
+    "tn": 9,
+    "fn": 3,
+    "total": 20,
+    "avg_time": 15.681881737709045,
+    "responses": [
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0000.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 6.137803077697754
+      },
+      {
+        "question": "Is there a book in the image?",
+        "image": "synthetic_0001.jpg",
+        "label": "no",
+        "pred": "yes",
+        "response": "Yes, there is a book in the image.",
+        "time": 8.348307847976685
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0002.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no colored shape in the image",
+        "time": 37.883445024490356
+      },
+      {
+        "question": "Is there a cat in the image?",
+        "image": "synthetic_0003.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no cat in the image.",
+        "time": 58.84856081008911
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0004.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 45.44456100463867
+      },
+      {
+        "question": "Is there a dog in the image?",
+        "image": "synthetic_0005.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no dog in the image.",
+        "time": 26.63558602333069
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0006.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 29.240137100219727
+      },
+      {
+        "question": "Is there a cup in the image?",
+        "image": "synthetic_0007.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no cup in the image.",
+        "time": 22.714526176452637
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0008.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no colored shape in the image",
+        "time": 11.898672819137573
+      },
+      {
+        "question": "Is there a tree in the image?",
+        "image": "synthetic_0009.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no tree in the image.",
+        "time": 20.4766788482666
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0010.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 5.720076084136963
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "synthetic_0011.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no person in the image.",
+        "time": 5.489947080612183
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0012.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 4.316401958465576
+      },
+      {
+        "question": "Is there a person in the image?",
+        "image": "synthetic_0013.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no person in the image.",
+        "time": 4.028002977371216
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0014.jpg",
+        "label": "yes",
+        "pred": "no",
+        "response": "No, there is no colored shape in the image",
+        "time": 4.808327913284302
+      },
+      {
+        "question": "Is there a car in the image?",
+        "image": "synthetic_0015.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no car in the image.",
+        "time": 3.9886019229888916
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0016.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 4.2444329261779785
+      },
+      {
+        "question": "Is there a cup in the image?",
+        "image": "synthetic_0017.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no cup in the image.",
+        "time": 3.937918186187744
+      },
+      {
+        "question": "Is there a colored shape in the image?",
+        "image": "synthetic_0018.jpg",
+        "label": "yes",
+        "pred": "yes",
+        "response": "Yes, there is a colored shape in the image",
+        "time": 4.432451963424683
+      },
+      {
+        "question": "Is there a cat in the image?",
+        "image": "synthetic_0019.jpg",
+        "label": "no",
+        "pred": "no",
+        "response": "No, there is no cat in the image.",
+        "time": 5.043195009231567
+      }
+    ]
+  }
+}

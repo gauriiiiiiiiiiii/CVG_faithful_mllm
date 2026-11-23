@@ -182,7 +182,7 @@ CVG-E is supposed to be faster than CVG (that's the whole point of single-pass).
 
 Why? Because to get the attention weights from the model, we need to set `output_attentions=True`, which forces the model to use "eager attention" instead of efficient SDPA. This materializes huge attention matrices (1171×1171) at all 22 layers, every generation step — even though we only need 1 layer's attention.
 
-This is fixable with a hook-based implementation, but we documented it as an important practical finding.
+This is fixable with a hook-based implementation, and we have since built it (see Part 4).
 
 #### Finding 5: The Goldilocks Problem
 
@@ -271,7 +271,83 @@ Even with these fixes, the methods still underperform vanilla. The calibration i
 
 - Created 14-slide presentation (PPTX + PDF)
 - Dark navy theme with accent colors
-- Covers: introduction, challenges, problem, related work, methodology, results, failure analysis, latency, publication status, next steps
+- Covers: introduction, challenges, problem, related work, methodology, results, failure analysis, latency, 7B scale-up, publication status, next steps
+
+---
+
+## Part 4: Scaling Up to LLaVA-1.5-7B (Current Phase)
+
+The 1.5B results raised one clear question: is the failure caused by CVG itself, or by the small model? The original paper only tested 7B and 13B models. To answer this fairly, we moved our experiments to the same model size the paper used.
+
+### Step 9: Fixing the Latency Problem (Hook-Based Attention)
+
+The 1.5B experiments showed CVG-E was *slower* than CVG because `output_attentions=True` forced every layer to use slow "eager" attention. We rebuilt the attention extraction:
+
+- **`SingleLayerHook`** (in `cvg/hooks.py`) attaches to **one** transformer layer only.
+- Only that one layer switches to eager attention, so we can read its attention weights.
+- All other layers keep using fast SDPA / Flash Attention.
+- The rejected branch is then approximated from that one layer's captured attention and hidden state.
+
+This removes the O(n²) cost at every layer that made CVG-E 18.6× slower than vanilla.
+
+### Step 10: Porting to LLaVA-1.5-7B
+
+LLaVA-1.5-7B has 32 language-model layers and 24 vision-encoder layers (vs 22 in TinyLLaVA). We set the layer choices to match the original paper's setup:
+
+| Setting | Layers used |
+| --- | --- |
+| Cross-attention (VTD query relevance) | 19, 20, 21, 22 |
+| Self-attention (VTD [CLS] importance) | 16, 17, 18 |
+| DAC calibration | 20 – 31 |
+| CVG-E single-pass approximation | 28 – 31 |
+
+The two new configs are `cvg_7b` and `cvg_e_7b` in `cvg/modules.py`. At 7B we use the **original** CVG hyperparameters, not the small-model calibration, because the original values were designed for this size.
+
+### Step 11: Running on a Cloud GPU (Google Colab)
+
+A 7B model does not fit on the M1 laptop, so we built a Colab notebook (`notebooks/cvg_e_7b_experiments.ipynb`) and an evaluation script (`scripts/run_7b_eval.py`):
+
+- **GPU:** NVIDIA Tesla T4 (15 GB VRAM), free Colab tier
+- **Benchmark:** full POPE COCO splits — **3,000 questions per split** (vs 180 before)
+- **Metrics:** accuracy, precision, recall, F1, yes-ratio, 95% Wilson confidence intervals, time per question
+
+### Step 12: First 7B Result — Vanilla Baseline
+
+| Method | Split | Parseable | Accuracy | Precision | Recall | F1 | Yes-ratio | Time/q |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Vanilla (fp16) | COCO random | 3000/3000 | **89.4%** | 91.3% | 87.1% | 89.1% | 47.7% | 1.16s |
+
+This matches the vanilla LLaVA-1.5-7B numbers reported in the literature (around 88–90%), which confirms our pipeline is correct. Every answer was parseable, and the yes-ratio is close to the ideal 50%.
+
+### Step 13: Out-of-Memory Problem and the 4-bit Fix
+
+Our first CVG and CVG-E runs on the T4 failed:
+
+- The 7B model in fp16 uses about **14 GB** of the T4's 15 GB.
+- CVG needs a second forward pass, and CVG-E needs one layer's full attention matrix. Neither fits in the remaining ~1 GB.
+- Every question hit a CUDA out-of-memory error. The script caught the error, and the result showed 50% accuracy with 0% recall. **These numbers are invalid and were discarded.**
+
+**Fix:** we added 4-bit quantization (NF4, via `bitsandbytes`) with a new `--quantize 4bit` option. This shrinks the model to about **5 GB**, which leaves enough memory for the contrastive branches. The notebook now installs `bitsandbytes` and uses 4-bit for CVG and CVG-E automatically.
+
+**Fairness note:** vanilla ran in fp16 and CVG/CVG-E will run in 4-bit. For the final paper we will also run vanilla in 4-bit, so every method is compared at the same precision.
+
+### What Is Still Pending
+
+| Experiment | Status |
+| --- | --- |
+| Vanilla 7B, COCO random | Done (89.4%) |
+| CVG 7B (4-bit), COCO random | Waiting for Colab GPU quota |
+| CVG-E 7B (4-bit), COCO random | Waiting for Colab GPU quota |
+| Vanilla 7B (4-bit), for fair comparison | Planned |
+| Popular + adversarial splits, all methods | Planned |
+| CHAIR, AMBER, TextVQA | Planned |
+| VCD baseline | Planned |
+
+### What We Expect to Show at 7B
+
+1. **Accuracy:** CVG-E should match or beat CVG, because adaptive α and text-patch protection keep more useful tokens.
+2. **Speed:** CVG-E should now be clearly faster than CVG, because the hook-based single-pass avoids the second full forward pass.
+3. **Scale effect:** comparing 1.5B (failure) with 7B (expected success) shows where contrastive decoding starts working.
 
 ---
 
@@ -282,3 +358,5 @@ Even with these fixes, the methods still underperform vanilla. The calibration i
 **Our CVG-E work shows that this approach has boundary conditions.** When you try to use contrastive decoding on small (1.5B) models — which are more practical for real-world deployment — the method fails. The perturbation that creates a useful contrastive signal also destroys the model's ability to generate coherent text.
 
 This is valuable because it tells the research community: contrastive decoding for hallucination mitigation is model-size dependent. Future work needs to find methods that work at small scale too, or find the minimum model size where contrastive decoding starts working.
+
+**Our current phase tests CVG-E at 7B**, the scale CVG was designed for. We fixed the latency bottleneck with a single-layer hook, built a cloud-GPU pipeline, and confirmed a correct vanilla baseline (89.4% on 3,000 POPE questions). The CVG and CVG-E 7B runs, now using 4-bit quantization, will show whether CVG-E can match CVG's accuracy while being faster.
