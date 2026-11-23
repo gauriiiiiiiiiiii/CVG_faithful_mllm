@@ -159,7 +159,7 @@ header(sl, "Key Challenges", "Limitations of Current Contrastive Decoding", 3)
 
 challenges = [
     ("Fixed Token Selection", CORAL, [
-        "CVG uses fixed ratio α = 0.2 for all images",
+        "CVG keeps a fixed α = 0.7 (top 70%) for all images",
         "Simple images: too many tokens kept (noise)",
         "Complex images: too few tokens (information loss)",
         "No adaptation to image difficulty or content",
@@ -190,9 +190,9 @@ for i, (title, color, items) in enumerate(challenges):
     card(sl, x, y, 2.8, 4.5, bc=color)
     dot(sl, x + 0.15, y + 0.15, 0.4, color)
     txt(sl, x + 0.15, y + 0.17, 0.4, 0.35, str(i+1), sz=14, b=True, c=WHITE, a=PP_ALIGN.CENTER)
-    txt(sl, x + 0.65, y + 0.2, 2.0, 0.35, title, sz=15, b=True, c=color)
-    accent(sl, x + 0.15, y + 0.65, 1.5, color)
-    bul(sl, x + 0.15, y + 0.85, 2.5, 3.3, items, sz=12)
+    txt(sl, x + 0.65, y + 0.12, 2.05, 0.6, title, sz=15, b=True, c=color)
+    accent(sl, x + 0.15, y + 0.85, 1.5, color)
+    bul(sl, x + 0.15, y + 1.0, 2.5, 3.3, items, sz=12)
 
 # ════════════════════════════════════════
 # 4. PROBLEM DEFINITION
@@ -279,10 +279,8 @@ accent(sl, 1.1, 2.0, 2.5, MINT)
 bul(sl, 1.1, 2.15, 5.0, 2.7, [
     "AttnReal (2025)",
     "  Directly reallocate attention — no contrastive branches",
-    "",
     "ASCD (arXiv, 2025)",
     "  Steer individual attention heads by text/object roles",
-    "",
     "DaID (2025)",
     "  Exploit natural layer-wise divergence",
     "",
@@ -295,7 +293,6 @@ txt(sl, 7.1, 1.6, 5.0, 0.4, "CVG — Our Baseline", sz=17, b=True, c=LAVENDER)
 accent(sl, 7.1, 2.0, 2.0, LAVENDER)
 bul(sl, 7.1, 2.15, 5.0, 2.7, [
     "Fu et al., IEEE TIP 2025",
-    "",
     "Three-component framework:",
     "  VTD — Visual Token Disentanglement",
     "  DAC — Dynamic Attention Calibration",
@@ -371,12 +368,10 @@ txt(sl, 1.1, 1.6, 6.0, 0.4, "Single-Pass Branch Approximation", sz=18, b=True, c
 accent(sl, 1.1, 2.0, 3.0, LAVENDER)
 bul(sl, 1.1, 2.2, 6.0, 2.0, [
     "Instead of running TWO full forward passes:",
-    "",
     "① Run chosen branch (single forward pass)",
     "② Cache attention maps at a designated layer",
     "③ Re-weight cached attention to approximate rejected branch",
     "④ Compute contrastive signal from re-weighted logits",
-    "",
     "Theoretical complexity: O(1) layer ops vs O(L) full pass",
 ], sz=14)
 
@@ -397,10 +392,10 @@ for i, (p, orig, ours, fail) in enumerate(params):
     sz_ = 10 if i > 0 else 11
     b_ = i == 0
     c_ = DIM if i == 0 else SOFT_WHITE
-    txt(sl, 8.0, y, 1.0, 0.3, p, sz=sz_, b=b_, c=c_)
-    txt(sl, 9.0, y, 1.0, 0.3, orig, sz=sz_, c=c_)
-    txt(sl, 10.0, y, 0.8, 0.3, ours, sz=sz_, c=MINT if i > 0 else c_)
-    txt(sl, 10.8, y, 1.5, 0.3, fail, sz=sz_, c=CORAL if i > 0 else c_)
+    txt(sl, 7.9, y, 0.95, 0.3, p, sz=sz_, b=b_, c=c_)
+    txt(sl, 8.8, y, 1.05, 0.3, orig, sz=sz_, c=c_)
+    txt(sl, 9.8, y, 1.1, 0.3, ours, sz=sz_, c=MINT if i > 0 else c_)
+    txt(sl, 10.85, y, 1.6, 0.3, fail, sz=sz_, c=CORAL if i > 0 else c_)
 
 card(sl, 0.8, 4.8, 11.7, 1.8, fc=DARK_CARD)
 txt(sl, 1.2, 4.9, 11, 0.35, "Evaluation Setup", sz=17, b=True, c=TEAL)
@@ -483,12 +478,10 @@ txt(sl, 1.1, 1.6, 5.0, 0.4, "Mode 1: Generation Collapse (49%)", sz=17, b=True, 
 accent(sl, 1.1, 2.0, 2.5, CORAL)
 bul(sl, 1.1, 2.15, 5.0, 2.5, [
     "89 of 180 responses are unparseable:",
-    "",
     "Question Echoing (53 responses, 60%):",
     "  Model repeats question verbatim",
     "  Insufficient grounding after suppression",
     "  Defaults to copying input tokens",
-    "",
     "Degenerate Output (36 responses, 40%):",
     "  Empty or truncated responses",
     "  Contrastive adjustment → near-zero probabilities",
@@ -500,14 +493,11 @@ txt(sl, 7.1, 1.6, 5.0, 0.4, "Mode 2: Extreme Yes-Bias (91%)", sz=17, b=True, c=G
 accent(sl, 7.1, 2.0, 2.5, GOLD)
 bul(sl, 7.1, 2.15, 5.0, 2.5, [
     "Among 91 parseable CVG responses:",
-    "",
     "Confusion Matrix:",
     "  TP=50  FP=33  TN=7  FN=1",
-    "",
     "91.2% yes-ratio (vs 50% ground truth)",
     "98% recall but only 60% precision",
     "33× more false positives than false negatives",
-    "",
     "Not hallucination reduction — bias shift",
 ], sz=13)
 
@@ -553,7 +543,7 @@ for i, (m, t, v, b) in enumerate(latency):
     txt(sl, 3.6, y, 1.0, 0.3, v, sz=sz_, c=c_)
     txt(sl, 4.7, y, 2.0, 0.3, b, sz=sz_, c=c_)
 
-bul(sl, 1.1, 3.9, 5.0, 0.5, [
+bul(sl, 1.1, 3.75, 5.0, 0.5, [
     "Latency inversion: CVG-E SLOWER than CVG!",
     "output_attentions=True → O(n²) at all 22 layers",
 ], sz=12, c=CORAL)
@@ -565,7 +555,6 @@ bul(sl, 7.1, 2.2, 5.0, 2.2, [
     "CVG dual-pass: D_KL ~ 0.5",
     "  Contrastive active (above ε = 0.1)",
     "  But: too much divergence → collapse",
-    "",
     "CVG-E single-pass: D_KL < 0.01",
     "  Far below ε threshold",
     "  Contrastive correction never fires",
